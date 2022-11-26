@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Jomhuria&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Itim&family=Jomhuria&display=swap');
+
+
+
+* {
+   margin: 0px;
+   padding: 0px;
+   font-family: 'Jomhuria', cursive;
+   /* border: 2px solid ; */
+   /* padding: 1rem; */
+}
+
+.b {
+   border: 2px solid red;
+}
+
+
+html {
+   overflow-y: hidden;
+   margin: 1rem 6rem;
+   background-color: #262827;
+   color: antiquewhite;
+}
+
+nav {
+   padding: 0.5rem;
+   display: flexbox;
+}
+
+.logo {
+   font-size: 4rem;
+   display: inline;
+   width: 40%;
+
+}
+
+
+
+
+
+.para{
+   margin-left: 2rem;
+   letter-spacing: 0.01rem;
+   word-spacing: 0.3rem;
+   text-align: left;
+   font-size: 1.8rem;
+   font-family: 'Itim', cursive;
+   line-height: 0.99em;
+   
+}
+.htext {
+   width: 50%;
+}
+
+
+
+
+
+
+.logo span {
+   color: red;
+}
+
+.menu {
+   margin-top: 8px;
+   font-size: 2rem;
+   display: inline;
+   float: right;
+   /* border: 2px solid blue; */
+}
+a{
+   color: aliceblue;
+}
+li a,
+li {
+   /* font-family: 'Inter', sans-serif; */
+   margin: 1rem;
+   display: inline;
+   list-style: none;
+   color: white;
+   text-decoration: none;
+}
+
+
+.let{
+   margin-top: 0.3 rem;
+   font-family: 'Itim', cursive;
+
+}
+
+
+.himage {
+   margin-left: 10%;
+   width: 40%;
+}
+
+section {
+   display: flex;
+   height: 72vh;
+}
+
+p{
+   margin: 0;
+}
+
+.professor {
+
+   width: 100%;
+   height: 100%;
+   border-radius: 3%;
+   float: right;
+}
+.let{
+   margin-top: 0.3rem;
+   display: block;
+}
+
+.let:hover{
+color: rgb(209, 24, 24);
+transition: 1s;
+}
+
+.fa-brands{
+   
+text-align: center;
+font-size: 2rem;
+margin: 0.5rem;
+}
+
+
+.fa-brands:hover{
+
+}
+
+.fa-github:hover{
+color: black;
+}
+.fa-linkedin:hover{
+color: rgb(0, 82, 114);
+}
+.fa-instagram:hover{
+color: rgb(199, 76, 67);
+}
+
+.social{
+   width: 40%;
+   display: block;
+   text-align: center;
+   margin-top: 1rem;
+}
+
+.slide-right{animation:slide-right 1.5s cubic-bezier(.25,.46,.45,.94) both}
+.slide-left{animation:slide-left 1.25s cubic-bezier(.25,.46,.45,.94) both}
+@keyframes slide-right{0%{transform:translateX(0)}100%{transform:translateX(100px)}}
+@keyframes slide-left{0%{transform:translateX(0)}100%{transform:translateX(-100px)}}

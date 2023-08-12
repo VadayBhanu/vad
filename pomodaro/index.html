@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+<!-- Option 1: Include in HTML -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" href="Untitled design.png" type="image/x-icon">
+<script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+<header>
+    <nav class="navbar">
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+       </div>
+<div class="menu">
+      <a href="#" class="active"><i class="fa-solid fa-house-chimney"></i>Home</a>
+      <a href="#contact"><i class="fa-solid fa-message"></i>Contact</a>
+      <div class="dropdown">
+        <a class="dropbtn">
+          <i class="fa-solid fa-circle-question"></i>Help</a>
+        <div class="dropdown-content">
+          <a href="#a">About Pomodoro technique</a>
+          <a href="#b">Why Pomodoro?</a>
+          <a href="#c">How to Use Pomodoro?</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <a href="#" class="dropbtn"><i class="fa-solid fa-gear"></i>Setting</a>
+        <div class="dropdown-content">
+          <!-- ///// -->
+          <div class="background-settings">
+            <h3>change Background</h3>
+            <input type="color" id="bgColorInput">
+          </div> 
+<!-- //// -->
+<h3>Background music</h3>
+<div>
+  <select id="music-select">
+    <option value="">Choose a song</option>
+    <option value="su.mp3">Song 1</option>
+    <option value="song2.mp3">Song 2</option>
+    <option value="song3.mp3">Song 3</option>
+  </select>
+  <button id="play-button">Play</button>
+  <button id="stop-button">Stop</button>
+</div>
+        </div> 
+      </div>
+   
+        </div>
+    </nav>
+
+  </header>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $(".hamburger").click(function () {
+        $(".menu").toggle(); /* Toggle the visibility of the menu on mobile */
+      });
+    });
+  </script>
+
+
+
+
+  <div class="pomodoro">
+  Pom
+    <img src="Tomato.jpg" alt="Image Description" class="image">
+    doro
+  </div>
+
+  <!-- <h1>Pomodoro Timer</h1> -->
+  <div id="timer">
+    <span id="minutes">25</span>
+    <span>:</span>
+    <span id="seconds">00</span>
+  </div>
+  <button id="startButton">Start</button>
+  <br>
+
+  <button id="shortBreakButton">Short Break</button>
+  <button id="pauseButton">Pause</button>
+  <button id="longBreakButton">Long Break</button>
+  <script src="script.js"></script>
+  <div class="task">
+  </div>
+
+
+
+<!-- addtask -->
+
+<div class="task-manager">
+  <div class="task-input">
+    <input type="text" id="taskInput" placeholder="Enter your task">
+    <button onclick="addTask()">Add Task</button>
+  </div>
+  <div class="task-list">
+    <ul id="taskList">
+      <!-- Task items will be added dynamically -->
+    </ul>
+  </div>
+  <div id="clear">
+      <button onclick="clearTasks()">Clear Tasks</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+<br>
+  <hr>
+<div class="section">
+  <h2 id="a"> what is Pomodoro technique?</h2>
+  <p> The Pomodoro Technique is a time management method developed by Francesco Cirillo. It involves breaking work into focused intervals called "pomodoros," typically 25 minutes long, followed by short breaks. After completing four pomodoros, a longer break is taken. This technique aims to increase productivity and concentration by leveraging short bursts of focused work and regular breaks. It helps individuals stay motivated, manage their time effectively, and maintain mental freshness throughout the day. By working in structured intervals, individuals can improve efficiency, reduce procrastination, and achieve a sense of accomplishment as they complete each pomodoro. The Pomodoro Technique is widely used and can be implemented with simple timers or specialized apps.
+  </p>
+</div>
+
+<div class="section">
+  <h2 id="b">why to use Pomodoro?</h2>
+  <p>1.The Pomodoro Technique improves productivity by breaking work into focused intervals and eliminating distractions.
+ </p>
+ <p>2.It enhances time management skills by providing a structured approach to allocate time effectively.</p>
+</p>
+<p>
+  3.Regular breaks prevent burnout, increase motivation, and improve overall well-being.
+</p>
+</div>
+
+<div class="section">
+  <h2 id="c">How to use Pomodoro?</h2>
+  <p>
+    1.Set a timer for 25 minutes: Start by choosing a task you want to work on and set a timer for 25 minutes, which is known as a pomodoro session.
+
+  </p>
+<p>
+2.Work on the task without distractions: During the 25-minute session, focus solely on the chosen task and avoid any distractions such as phone notifications or unrelated websites.
+
+</p>
+<p>
+3.Take a short break: Once the 25 minutes are up, take a short 5-minute break to rest and recharge. Use this time to stretch, get a drink, or do something enjoyable to clear your mind.
+
+</p>   
+<p>
+4.Repeat the process: After the short break, start another 25-minute pomodoro session and continue working on the task. Repeat this cycle of focused work and short breaks.
+
+</p>      
+<p>
+5.Repeat the process: After the short break, start another 25-minute pomodoro session and continue working on the task. Repeat this cycle of focused work and short breaks.
+
+</p></div>
+
+
+
+
+  <footer id="contact">
+    
+    <div class="social-section">
+      <img src="footerpic.png" alt="">
+      <h3>Follow Us</h3>
+      <ul>
+        <li><a href="https://github.com/VadayBhanu"><i class="fab fa-github"></i></a></li>
+        <li><a href="https://www.linkedin.com/in/bhanu-yadav-849a7b220/"><i class="fab fa-linkedin"></i></a></li>
+        <li><a href="https://www.instagram.com/vaday_bhanu/"><i class="fab fa-instagram"></i></a></li>
+      </ul>
+      <div class="contact-info">
+        <!-- <p><i class="fas fa-map-marker-alt"></i> 04 Kupandol, lalitpur, Nepal</p>
+        <p><i class="fas fa-phone"></i> +1 234 5678</p>
+        <p><i class="fas fa-envelope"></i> bips964@gmail.com</p> -->
+        <a href="https://bhanupratapyadav.com.np/" class="portfolio-link">Visit Portfolio</a>
+      </div>
+    </div>
+    <div class="contact-section">
+      <h2>Contact Us</h2>
+      <form>
+        <input type="text" placeholder="Your Name">
+        <input type="email" placeholder="Your Email">
+        <textarea placeholder="Message"></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </footer>
+<div class="end">
+  @2023 for developer's detail:visit <a href="https://bhanupratapyadav.com.np/">portfolio-link</a>.
+</div>
+  
+</body>
+
+</html>

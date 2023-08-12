@@ -1,0 +1,538 @@
+*{
+  margin: 0%;
+  padding: 0%;
+}
+
+body {
+  background-color: rgb(152, 152, 180);
+    text-align: center;
+}
+
+/* addtask */
+/* Show navigation links in mobile view */
+
+
+  /* addtask */
+  /* ... (existing CSS styles) ... */
+/* ... (existing CSS styles) ... */
+
+.task-manager {
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+}
+
+.task-input input {
+  padding: 10px;
+  width: 60%;
+  margin-right: 10px;
+}
+
+.task-input button {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.task-list {
+  margin-top: 20px;
+}
+
+.task-list li {
+  list-style: none;
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+.task-list li span {
+  flex-grow: 1;
+}
+
+.task-list li button {
+  padding: 5px 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.task-list li:last-child {
+  border-bottom: none;
+}
+
+#clear{
+  text-align: center;
+}
+/* ... (existing CSS styles) ... */
+
+
+/* ... (existing CSS styles) ... */
+
+.pomodoro {
+   font-size: 450%; 
+  padding: 2rem;
+  text-align: center;
+  display: inline-flex;
+}
+
+@media (max-width: 568x) {
+  .pomodoro {
+    font-size: 100%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+.image {
+  width: 70px;
+  height: 80PX;
+  /* border-radius:px; */
+  /* box-shadow: 0px 0px 5px rgba(247, 247, 247, 0.2); */
+}
+
+
+header {
+  font-family: 'Indie Flower', cursive;
+
+  background-color: #f3f0f0;
+  /* padding: 20px; */
+  /* text-align: center; */
+}
+/* .navbar { 
+  position: fixed;
+} */
+
+.navbar a {
+  font-size: 1.2rem;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+  margin: 1rem;
+
+}
+
+.navbar a:hover{
+  color: #0da4eb;
+}
+/*  */
+
+
+/* Add this CSS to your existing styles */
+
+
+
+#timer {
+  font-size: 48px;
+  margin-top: 50px;
+}
+
+#startButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+button {
+  margin: 12px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+#timer {
+  /* border: #ebdddd 0.2rem solid; */
+  font-size: 800%;
+}
+
+
+
+
+
+/* footer */
+
+/* body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f2f2f2;
+  } */
+
+/* h1 {
+    text-align: center;
+  } */
+input[type="text"],
+input[type="email"],
+textarea {
+  flex: 1;
+  padding: 10px;
+  margin-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+/* paragraph */
+
+p{
+  color:black;
+text-align: left;
+font-size: 25px;
+/* font-family: 'Amaranth'; */
+}
+.que{
+  color: red;
+}
+/* .///// setting*/
+
+/* ... existing styles ... */
+
+/* Styles for the dropdown menu */
+/* ... existing styles ... */
+
+/* Styles for the dropdown menu */
+
+/* Dropdown Button */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  color: #050202;
+  /* padding: 10px;
+  font-size: 16px; */
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  /* position: absolute; */
+  background-color: #237499;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+i{
+  padding: 7px;
+}
+.dropdown-content a {
+  color: #000000;
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #d63d3d;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+
+/* footer  */
+
+footer {
+  background-color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  /* border: solid 1px red; */
+}
+
+.contact-section {
+
+  margin-bottom: 20px;
+  padding: 1rem; 
+   /* border: solid 1px red; */
+   width: 50%;
+   padding-top: 10%;
+
+}
+
+.contact-section h3 {
+  font-size: 18px;
+}
+
+.contact-section form input,
+.contact-section form textarea {
+  width: 90%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  /* border: solid 1px red; */
+}
+
+.contact-section form button {
+  padding: 10px 20px;
+  background-color: #3d3c3c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.social-section{
+  width: 52%;
+  padding: 2%;
+}
+
+.social-section h3 {
+  font-size: 18px;
+}
+
+.social-section ul {
+  list-style: none;
+  padding:0;
+  margin-bottom: 10px;
+}
+
+.social-section ul li {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.social-section ul li a {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: #070505;
+  color: #fff;
+  text-align: center;
+  line-height: 30px;
+  border-radius: 50%;
+}
+
+.contact-info p {
+  margin-bottom: 5px;
+}
+
+.portfolio-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.portfolio-link:hover {
+  background-color: #080606;
+}
+
+
+
+
+.section {
+  padding: 20px;
+  background-color: #f2f2f2;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+p {
+  margin-bottom: 0;
+}
+
+/* @media only screen and (max-width: 600px) {
+  .section {
+    padding: 10px;
+  }
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Add this CSS to your existing styles */
+
+.background-settings {
+  padding: 10px;
+}
+
+.background-settings h3 {
+  margin-bottom: 10px;
+}
+
+ .background-colors {
+  display: flex;
+  flex-wrap: wrap;
+} 
+
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Add this CSS to your existing styles */
+
+
+
+.end{
+  padding: 1rem;
+  border: #11bddb solid 1 rem;
+}
+
+.hamburger{
+  display: none;
+  cursor: pointer;
+}
+
+.bar{
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px auto;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+@media(max-width:1024px){
+  .hamburger{
+    display: block;
+  }
+
+  .hamburger.active .bar:nth-child(2){
+    opacity: 0;
+  }
+  .hamburger.active .bar:nth-child(1){
+    transform: translateY(8px) rotate(45deg);
+  }
+  .hamburger.active .bar:nth-child(3){
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .nav-menu{
+    position: fixed;
+    left: 1%;
+    top: 70px;
+    gap: 0;
+    flex-direction: column;
+    background-color: #262626;
+    width: 100%;
+    text-align: center;
+    transition: 0.3s;
+  }
+
+  .nav-item{
+    margin: 16px 0;
+  }
+
+  .nav-menu.active{
+    left: 0;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Your existing styles for the navbar go here */
+
+/* Hide the dropdown content by default */
+.dropdown-content {
+  display: none;
+}
+
+/* Media query for mobile devices (adjust the max-width as needed) */
+@media (max-width: 768px) {
+  .navbar {
+    /* display: flex; */
+    flex-direction: column;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 30px;
+    height: 4px;
+    margin: 6px auto;
+    background-color: #333;
+  }
+
+  /* Show the dropdown content when hamburger is clicked */
+  .dropdown-content.show {
+    display: block;
+  }
+}
+/* Your existing styles for the navbar go here */
+
+/* Hide the menu by default */
+.menu {
+  display: flex;
+}
+
+.menu a {
+  display: block;
+  padding: 10px;
+}
+
+/* Hamburger icon styles */
+.hamburger {
+  display: none; /* Hide the hamburger icon by default */
+  cursor: pointer;
+  padding: 10px;
+}
+
+.hamburger .bar {
+  display: block;
+  width: 30px;
+  height: 4px;
+  margin: 6px auto;
+  background-color: #333;
+}
+
+/* Media query for mobile devices (adjust the max-width as needed) */
+@media (max-width: 768px) {
+  .menu {
+    display: none; /* Hide the menu on mobile */
+  }
+
+  .hamburger {
+    display: block; /* Show the hamburger icon on mobile */
+  }
+
+  .dropdown-content.show {
+    display: block;
+  }
+}

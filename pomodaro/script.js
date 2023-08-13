@@ -4,24 +4,6 @@ let interval;
 let isPaused = true;
 
 
-// // hamburger
-// function toggleNav() {
-//   var navLinks = document.getElementById("navLinks");
-//   if (navLinks.style.display === "block") {
-//     navLinks.style.display = "none";
-//   } else {
-//     navLinks.style.display = "block";
-//   }
-// }
-
-
-
-
-
-
-
-
-
   // Change background color
   const bgColorInput = document.getElementById("bgColorInput");
   bgColorInput.addEventListener("change", function () {
@@ -71,6 +53,24 @@ function startTimer() {
   longBreakButton.disabled = true;
 }
 
+// Event listeners for buttons
+startButton.addEventListener('click', startTimer);
+pauseButton.addEventListener('click', pauseTimer);
+
+// ... (other code)
+
+// Event listener for short break button
+shortBreakButton.addEventListener('click', () => {
+  time = 300; // 5 minutes in seconds
+  updateTimerDisplay();
+});
+
+// Event listener for long break button
+longBreakButton.addEventListener('click', () => {
+  time = 900; // 15 minutes in seconds
+  updateTimerDisplay();
+});
+
 // Function to pause the timer
 function pauseTimer() {
   clearInterval(interval);
@@ -92,18 +92,6 @@ function resetTimer() {
   shortBreakButton.disabled = false;
   longBreakButton.disabled = false;
 }
-
-// Event listeners for buttons
-startButton.addEventListener('click', startTimer);
-pauseButton.addEventListener('click', pauseTimer);
-shortBreakButton.addEventListener('click', () => {
-  time = 300; // 5 minutes in seconds
-  updateTimerDisplay();
-});
-longBreakButton.addEventListener('click', () => {
-  time = 900; // 15 minutes in seconds
-  updateTimerDisplay();
-});
 
 // Initial setup
 updateTimerDisplay();
@@ -256,6 +244,16 @@ function clearTasks() {
 
 
 
+window.addEventListener("scroll", function () {
+  var menu = document.getElementById("menu");
+  var scrollPosition = window.scrollY;
+
+  if (scrollPosition > 100) { // Adjust the scroll position threshold as needed
+    menu.classList.add("scrolled");
+  } else {
+    menu.classList.remove("scrolled");
+  }
+});
 
 
 

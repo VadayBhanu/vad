@@ -27,7 +27,7 @@
         <span class="bar"></span>
         <span class="bar"></span>
        </div>
-<div class="menu">
+<div class="menu" id="menu">
       <a href="#" class="active"><i class="fa-solid fa-house-chimney"></i>Home</a>
       <a href="#contact"><i class="fa-solid fa-message"></i>Contact</a>
       <div class="dropdown">
@@ -40,21 +40,25 @@
         </div>
       </div>
       <div class="dropdown">
-        <a href="#" class="dropbtn"><i class="fa-solid fa-gear"></i>Setting</a>
+        <a href="#" class="dropbtn">
+          <i class="fa-solid fa-gear"></i>Setting</a> 
+          
         <div class="dropdown-content">
           <!-- ///// -->
           <div class="background-settings">
-            <h3>change Background</h3>
+            <h3>Change Background</h3>
             <input type="color" id="bgColorInput">
           </div> 
 <!-- //// -->
-<h3>Background music</h3>
+<h3>Background Music</h3>
 <div>
   <select id="music-select">
-    <option value="">Choose a song</option>
-    <option value="su.mp3">Song 1</option>
-    <option value="song2.mp3">Song 2</option>
-    <option value="song3.mp3">Song 3</option>
+    <option value="">choose song</option>
+    <option value="">song 1</option>
+    <option value="su.mp3">Song 2</option>
+    <option value="song2.mp3">Song 3</option>
+    <option value="song3.mp3">Song 4</option>
+    <option value="song3.mp3">Song 5</option>
   </select>
   <button id="play-button">Play</button>
   <button id="stop-button">Stop</button>
@@ -101,8 +105,6 @@
   <div class="task">
   </div>
 
-
-
 <!-- addtask -->
 
 <div class="task-manager">
@@ -125,13 +127,13 @@
 <br>
   <hr>
 <div class="section">
-  <h2 id="a"> what is Pomodoro technique?</h2>
+  <h2 id="a"> What is Pomodoro technique?</h2>
   <p> The Pomodoro Technique is a time management method developed by Francesco Cirillo. It involves breaking work into focused intervals called "pomodoros," typically 25 minutes long, followed by short breaks. After completing four pomodoros, a longer break is taken. This technique aims to increase productivity and concentration by leveraging short bursts of focused work and regular breaks. It helps individuals stay motivated, manage their time effectively, and maintain mental freshness throughout the day. By working in structured intervals, individuals can improve efficiency, reduce procrastination, and achieve a sense of accomplishment as they complete each pomodoro. The Pomodoro Technique is widely used and can be implemented with simple timers or specialized apps.
   </p>
 </div>
 
 <div class="section">
-  <h2 id="b">why to use Pomodoro?</h2>
+  <h2 id="b">Why to use Pomodoro?</h2>
   <p>1.The Pomodoro Technique improves productivity by breaking work into focused intervals and eliminating distractions.
  </p>
  <p>2.It enhances time management skills by providing a structured approach to allocate time effectively.</p>
@@ -156,13 +158,10 @@
 
 </p>   
 <p>
-4.Repeat the process: After the short break, start another 25-minute pomodoro session and continue working on the task. Repeat this cycle of focused work and short breaks.
+4.Repeat the process: After the short or long break , start another 25-minute pomodoro session and continue working on the task. Repeat this cycle of focused work and short breaks.
 
 </p>      
-<p>
-5.Repeat the process: After the short break, start another 25-minute pomodoro session and continue working on the task. Repeat this cycle of focused work and short breaks.
-
-</p></div>
+</div>
 
 
 
@@ -185,8 +184,8 @@
       </div>
     </div>
     <div class="contact-section">
-      <h2>Contact Us</h2>
-      <form>
+      <h2 >Contact Us</h2>
+      <form action="https://formsubmit.co/zuhumu ">
         <input type="text" placeholder="Your Name">
         <input type="email" placeholder="Your Email">
         <textarea placeholder="Message"></textarea>

@@ -1,0 +1,176 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    text-align: center;
+    background-image: url('img6.webp');
+    /* background: linear-gradient(135deg, #007bff, #00d4ff); */
+    color: white;
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  .content-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .content-box img {
+    width: 300px;
+    height: auto;
+  }
+  
+  .content-box div {
+    padding: 20px;
+  }
+  
+  footer {
+    background-color: #8f8f9b;
+    color: #f1f1f1;
+    padding: 40px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .social-section {
+    flex: 1;
+    min-width: 300px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+ 
+  
+  
+  .social-section h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color:#fc4f2f0;
+  }
+  
+  .social-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .social-section ul li a {
+    font-size: 24px;
+    color: #f1f1f1;
+    transition: color 0.3s ease;
+  }
+  
+  .social-section ul li a:hover {
+    color: #fc4f2f0;
+
+  }
+  
+  .contact-info {
+    margin-top: 20px;
+  }
+  
+  .contact-info p {
+    margin: 5px 0;
+  }
+  
+  .contact-info .portfolio-link {
+    color: #fc4f2f0;
+
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .contact-info .portfolio-link:hover {
+    color: #f1f1f1;
+  }
+  
+  .contact-section {
+    flex: 1;
+    min-width: 300px;
+    margin-bottom: 20px;
+  }
+  
+  .contact-section h2 {
+    font-size: 28px;
+    color: #fc4f2f0;
+
+    margin-bottom: 20px;
+  }
+  
+  .contact-section form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .contact-section input,
+  .contact-section textarea {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #f1eeee;
+    color: #f1f1f1;
+  }
+  
+  .contact-section textarea {
+    resize: none;
+    height: 100px;
+  }
+  
+  .contact-section button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #fc4f2f0;
+
+    color: #1c1c1e;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .contact-section button:hover {
+    background-color: #f1f1f1;
+    color: #1c1c1e;
+  }
+  
+  .end {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #e7dede;
+    color: #999;
+  }
+  
+  .end a {
+    color: #fc4f2f0;
+
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .end a:hover {
+    color: #f1f1f1;
+  }
+  

@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+<meta name="theme-color" content="#0f1117"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FindIt"/>
+<meta name="description" content="Campus Lost & Found — report lost items and find what you've been missing"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<title>FindIt — Campus Lost & Found</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0f1117;--surface:#181c27;--card:#1e2433;--card2:#252b3a;
+  --border:#2a3040;--text:#f0f2f8;--muted:#8891a8;--muted2:#5a6278;
+  --accent:#f5a623;--accent2:#c4831a;--green:#22c55e;--red:#ef4444;
+  --blue:#3b82f6;--purple:#a855f7;--teal:#14b8a6;
+  --r:14px;--rLg:20px;--rXl:26px;
+  --font-head:'Syne',system-ui,sans-serif;
+  --font-body:'DM Sans',system-ui,sans-serif;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);font-family:var(--font-body);color:var(--text);overscroll-behavior:none}
+body{display:flex;flex-direction:column;max-width:500px;margin:0 auto;position:relative;min-height:100dvh}
+input,textarea,select,button{font-family:var(--font-body);outline:none}
+input::placeholder,textarea::placeholder{color:var(--muted2)}
+select option{background:var(--card)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+img{max-width:100%;border-radius:var(--r)}
+
+/* ── Layout ── */
+#app{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;padding-top:calc(12px + var(--safe-top));display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100}
+#content{flex:1;overflow-y:auto;padding:16px;padding-bottom:20px}
+#bottomnav{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:var(--safe-bot)}
+.nav-btn{flex:1;border:none;background:none;cursor:pointer;padding:10px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:opacity .15s}
+.nav-icon{font-size:20px;transition:transform .2s}
+.nav-label{font-size:10px;font-weight:500;color:var(--muted)}
+.nav-btn.active .nav-label{color:var(--accent);font-weight:700}
+.nav-btn.active .nav-icon{transform:scale(1.15)}
+.nav-dot{width:16px;height:3px;border-radius:2px;background:var(--accent);margin-top:1px}
+
+/* ── Auth screens ── */
+#auth-screen{display:flex;flex-direction:column;min-height:100dvh;background:var(--bg)}
+.auth-hero{background:linear-gradient(160deg,#1a1f2e 0%,#0f1117 60%);padding:60px 24px 40px;text-align:center;position:relative;overflow:hidden}
+.auth-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#f5a62318,transparent 70%)}
+.auth-hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#3b82f612,transparent 70%)}
+.auth-logo{font-family:var(--font-head);font-size:42px;font-weight:800;color:var(--text);position:relative}
+.auth-logo span{color:var(--accent)}
+.auth-tagline{color:var(--muted);font-size:14px;margin-top:8px;position:relative}
+.auth-body{flex:1;padding:24px;display:flex;flex-direction:column;gap:16px}
+.auth-tabs{display:flex;background:var(--card);border-radius:var(--rLg);padding:4px;gap:4px}
+.auth-tab{flex:1;border:none;border-radius:var(--r);padding:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.auth-tab.active{background:var(--accent);color:#0f1117}
+.auth-tab:not(.active){background:transparent;color:var(--muted)}
+
+/* ── Cards / Components ── */
+.card{background:var(--card);border-radius:var(--rXl);padding:18px;border:1px solid var(--border)}
+.card-sm{background:var(--card);border-radius:var(--rLg);padding:14px;border:1px solid var(--border)}
+.card-flat{background:var(--card2);border-radius:var(--r);padding:12px}
+.section-title{font-family:var(--font-head);font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px}
+.label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+
+/* ── Form elements ── */
+.inp{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:14px;color:var(--text);transition:border .2s}
+.inp:focus{border-color:var(--accent)}
+.inp-wrap{position:relative}
+.inp-wrap .inp{padding-left:42px}
+.inp-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+.inp-wrap.right-icon .inp{padding-right:44px}
+.inp-wrap .right-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted)}
+textarea.inp{resize:vertical;min-height:90px;padding:12px 14px}
+select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238891a8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+
+/* ── Buttons ── */
+.btn{border:none;border-radius:var(--r);font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s,transform .1s;font-family:var(--font-body);font-size:14px;padding:12px 20px}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#0f1117}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-danger{background:#ef444418;color:var(--red);border:1px solid #ef444430}
+.btn-success{background:#22c55e18;color:var(--green);border:1px solid #22c55e30}
+.btn-full{width:100%}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:10px}
+.btn-xs{padding:5px 10px;font-size:11px;border-radius:8px}
+
+/* ── Pills / Badges ── */
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill{border:none;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.pill-active{background:var(--accent);color:#0f1117}
+.pill-inactive{background:var(--card2);color:var(--muted)}
+.chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chip-row::-webkit-scrollbar{display:none}
+
+/* ── Item card ── */
+.item-card{background:var(--card);border-radius:var(--rXl);padding:16px;border:1px solid var(--border);display:flex;gap:14px;cursor:pointer;transition:background .15s}
+.item-card:hover,.item-card:active{background:var(--card2)}
+.item-thumb{width:52px;height:52px;border-radius:16px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.item-info{flex:1;min-width:0}
+.item-name{font-weight:700;font-size:15px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:4px}
+.item-desc{font-size:13px;color:var(--muted);line-height:1.4;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item-meta{display:flex;justify-content:space-between;align-items:center}
+.item-loc{font-size:12px;color:var(--muted2)}
+.heart-btn{font-size:18px;cursor:pointer;border:none;background:none;padding:2px;flex-shrink:0}
+
+/* ── Stack grid ── */
+.stack{display:grid;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── Stat card ── */
+.stat-card{background:var(--card);border-radius:var(--rLg);padding:14px;text-align:center;border:1px solid var(--border)}
+.stat-icon{font-size:22px}
+.stat-num{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--text);margin-top:4px}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── Avatar ── */
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--font-head)}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);border-radius:var(--r);padding:11px 20px;font-size:13px;font-weight:700;z-index:9999;white-space:nowrap;opacity:0;transition:all .3s;pointer-events:none;font-family:var(--font-body)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Modal / Sheet ── */
+.sheet-overlay{position:fixed;inset:0;background:#00000090;z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet-overlay.open{opacity:1;pointer-events:all}
+.sheet{background:var(--surface);border-radius:26px 26px 0 0;padding:24px;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;border:1px solid var(--border);border-bottom:none;transform:translateY(40px);transition:transform .3s}
+.sheet-overlay.open .sheet{transform:translateY(0)}
+.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px}
+.sheet-title{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text);margin-bottom:18px}
+
+/* ── Topbar elements ── */
+.tb-back{border:none;background:var(--card2);border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text)}
+.tb-logo{width:36px;height:36px;border-radius:12px;background:#f5a62322;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tb-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.tb-actions{display:flex;gap:8px;align-items:center;margin-left:auto}
+.tb-icon-btn{border:none;background:var(--card2);border-radius:10px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;flex-shrink:0}
+.tb-badge{position:absolute;top:4px;right:4px;width:10px;height:10px;background:var(--red);border-radius:50%;border:2px solid var(--surface)}
+
+/* ── Hero card ── */
+.hero-card{background:linear-gradient(135deg,#1a1f2e 0%,#252b3a 100%);border-radius:var(--rXl);padding:22px;border:1px solid var(--border);position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#f5a62312,transparent 70%);pointer-events:none}
+
+/* ── Message bubbles ── */
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.45;margin-bottom:6px;word-break:break-word}
+.msg-bubble.me{background:var(--accent);color:#0f1117;border-bottom-right-radius:4px;margin-left:auto}
+.msg-bubble.them{background:var(--card2);color:var(--text);border-bottom-left-radius:4px}
+.msg-time{font-size:10px;color:var(--muted2);margin-bottom:10px}
+.msg-me-wrap{display:flex;flex-direction:column;align-items:flex-end}
+.msg-them-wrap{display:flex;flex-direction:column;align-items:flex-start}
+
+/* ── Divider ── */
+.divider{height:1px;background:var(--border);margin:6px 0}
+
+/* ── Info tiles ── */
+.info-tile{background:var(--card2);border-radius:12px;padding:12px}
+.info-tile .lbl{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.info-tile .val{font-weight:700;color:var(--text);margin-top:4px;font-size:14px}
+
+/* ── Notification row ── */
+.notif-row{background:var(--card);border-radius:var(--rLg);padding:14px 16px;border:1px solid var(--border);display:flex;gap:12px;cursor:pointer}
+.notif-row.unread{border-color:#f5a62340;background:#f5a6230a}
+.notif-icon{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.unread-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px}
+
+/* ── Admin tab ── */
+.admin-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.fade-up{animation:fadeUp .3s ease both}
+
+/* ── Install banner ── */
+#install-banner{background:linear-gradient(135deg,#f5a623,#c4831a);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;display:none}
+#install-banner.show{display:flex}
+
+/* ── Loading ── */
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:48px 24px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-text{font-size:15px;font-weight:600;margin-bottom:6px}
+.empty-sub{font-size:13px;color:var(--muted2)}
+
+/* ── Profile menu ── */
+.profile-link{display:flex;align-items:center;gap:14px;cursor:pointer;padding:4px 0}
+.profile-link-icon{width:42px;height:42px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.profile-link-arrow{color:var(--muted);font-size:18px;margin-left:auto}
+
+/* ── Responsive tweaks ── */
+@media(min-width:501px){
+  body{box-shadow:0 0 60px #00000080}
+  #bottomnav{border-radius:0 0 20px 20px}
+}
+</style>
+</head>
+<body>
+
+<div id="auth-screen" style="display:none"></div>
+<div id="app" style="display:none">
+  <div id="install-banner">
+    <div style="font-size:22px">📲</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:14px;color:#0f1117">Install FindIt</div><div style="font-size:12px;color:#0f1117bb">Add to your home screen</div></div>
+    <button id="install-btn" class="btn btn-sm" style="background:#0f1117;color:#f5a623">Install</button>
+    <button id="install-dismiss" style="border:none;background:none;font-size:18px;color:#0f1117;cursor:pointer">×</button>
+  </div>
+  <div id="topbar"></div>
+  <div id="content"></div>
+  <div id="bottomnav" style="display:none"></div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Sheets -->
+<div class="sheet-overlay" id="sheet-claim">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">✋ Claim This Item</div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6">Tell us details only the true owner would know — this helps us verify your claim quickly.</p>
+    <div class="label">Proof of Ownership *</div>
+    <textarea class="inp" id="claim-proof" placeholder="e.g. My initials are engraved inside, I had 3 cards: student ID, Visa, and library card…" style="margin-bottom:12px"></textarea>
+    <div class="label">Your contact number (optional)</div>
+    <input class="inp" id="claim-contact" placeholder="+1 555 0100" style="margin-bottom:16px"/>
+    <button class="btn btn-primary btn-full" onclick="submitClaim()">Submit Claim</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeSheet('claim')">Cancel</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheet-message">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="msg-sheet-title">Message</div>
+    <div id="msg-thread" style="display:flex;flex-direction:column;gap:4px;min-height:120px;max-height:240px;overflow-y:auto;padding:4px 0;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px">
+      <input class="inp" id="msg-input" placeholder="Type a message…" style="flex:1" onkeydown="if(event.key==='Enter')sendMessage()"/>
+      <button class="btn btn-primary btn-sm" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheet-edititem">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">✏️ Edit Item</div>
+    <input type="hidden" id="edit-item-id"/>
+    <div class="stack">
+      <div><div class="label">Item Name</div><input class="inp" id="edit-name" placeholder="Item name"/></div>
+      <div><div class="label">Location</div><input class="inp" id="edit-location" placeholder="Location"/></div>
+      <div><div class="label">Status</div>
+        <select class="inp" id="edit-status">
+          <option>Found</option><option>In Review</option><option>Claimed</option>
+        </select>
+      </div>
+      <div><div class="label">Description</div><textarea class="inp" id="edit-desc" placeholder="Description"></textarea></div>
+      <button class="btn btn-primary btn-full" onclick="saveEditItem()">Save Changes</button>
+      <button class="btn btn-ghost btn-full" onclick="closeSheet('edititem')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════
+   DATA LAYER — localStorage persistence
+════════════════════════════════════════════════ */
+const DB = {
+  get(k){ try{return JSON.parse(localStorage.getItem('findit_'+k))||null}catch{return null} },
+  set(k,v){ localStorage.setItem('findit_'+k,JSON.stringify(v)) },
+  init(){
+    if(!DB.get('users')){
+      DB.set('users',[
+        {id:'u_admin',name:'Admin One',email:'admin@findit.app',password:'admin123',role:'admin',avatar:'A1',verified:true,joined:'Jan 2024',bio:'Campus Lost & Found Administrator'},
+        {id:'u1',name:'Bhanu Yadav',email:'bhanu@uni.edu',password:'pass123',role:'student',avatar:'BY',verified:true,joined:'Jan 2024',bio:'Computer Science student'},
+        {id:'u2',name:'Priya Sharma',email:'priya@uni.edu',password:'pass123',role:'student',avatar:'PS',verified:true,joined:'Oct 2023',bio:'Engineering student'},
+      ]);
+    }
+    if(!DB.get('items')){
+      DB.set('items',[
+        {id:'i1',name:'Black Leather Wallet',category:'Accessories',location:'Central Library',description:'Slim leather wallet with student ID and bank cards. Has a small B.Y. monogram inside.',color:'Black',status:'Found',savedBy:[],postedBy:'u2',date:'2024-01-15',emoji:'👜'},
+        {id:'i2',name:'iPhone 13 Pro',category:'Electronics',location:'Science Block B',description:'Space grey iPhone in a clear case with a small crack on the bottom-left corner.',color:'Grey',status:'Found',savedBy:[],postedBy:'u2',date:'2024-01-14',emoji:'📱'},
+        {id:'i3',name:'Steel Water Bottle',category:'Daily Use',location:'Cafeteria',description:'500ml silver insulated bottle covered in anime stickers. Name "Raj" written on base.',color:'Silver',status:'Found',savedBy:['u1'],postedBy:'u2',date:'2024-01-13',emoji:'🧴'},
+        {id:'i4',name:'Grey University Hoodie',category:'Clothing',location:'Sports Hall',description:'XL grey hoodie with the university crest on the front-left chest.',color:'Grey',status:'Claimed',savedBy:[],postedBy:'u_admin',date:'2024-01-12',emoji:'👕'},
+        {id:'i5',name:'Toyota Car Keys',category:'Keys',location:'Parking Lot C',description:'Toyota key fob on a red carabiner ring with two other keys.',color:'Black',status:'Found',savedBy:[],postedBy:'u_admin',date:'2024-01-11',emoji:'🔑'},
+        {id:'i6',name:'Reading Glasses',category:'Accessories',location:'Study Room 3',description:'Tortoiseshell frame reading glasses in a brown leather case.',color:'Brown',status:'In Review',savedBy:[],postedBy:'u2',date:'2024-01-10',emoji:'👓'},
+      ]);
+    }
+    if(!DB.get('reports')){
+      DB.set('reports',[
+        {id:'r1',title:'Lost AirPods Pro Case',category:'Electronics',location:'Student Center',description:'White MagSafe charging case, no earbuds.',date:'2024-01-14',status:'Matching Found',userId:'u1'},
+        {id:'r2',title:'Missing Student ID',category:'Documents',location:'Library 2nd Floor',description:'Student ID card in a transparent holder with a lanyard.',date:'2024-01-13',status:'Pending',userId:'u1'},
+      ]);
+    }
+    if(!DB.get('claims')) DB.set('claims',[{id:'c1',itemId:'i1',item:'Black Leather Wallet',status:'Pending Verification',date:'Today',userId:'u1',proof:'My initials BY are monogrammed inside. I had 3 cards inside.',contact:''}]);
+    if(!DB.get('notifs')) DB.set('notifs',[
+      {id:'n1',title:'Possible match found! 🎉',text:'Your AirPods report may match a recently posted item.',read:false,time:'2m ago',userId:'u1'},
+      {id:'n2',title:'Report approved',text:'Your lost ID card report has been reviewed and approved.',read:false,time:'1h ago',userId:'u1'},
+      {id:'n3',title:'New item near you',text:'A grey hoodie was found at Sports Hall.',read:true,time:'1d ago',userId:'u1'},
+    ]);
+    if(!DB.get('messages')) DB.set('messages',[
+      {id:'m1',from:'u2',to:'u1',text:'Hi! I found a wallet at the library. Is it yours?',time:'10:31 AM',date:'Today'},
+      {id:'m2',from:'u1',to:'u2',text:'Yes! That might be mine. It has B.Y. initials inside.',time:'10:33 AM',date:'Today'},
+      {id:'m3',from:'u2',to:'u1',text:'Perfect, come to the library front desk to collect it.',time:'10:35 AM',date:'Today'},
+    ]);
+  }
+};
+
+const CATS = ['All','Electronics','Accessories','Clothing','Daily Use','Keys','Documents','Bags'];
+const STATUS_COLOR = {Found:'#22c55e',Claimed:'#3b82f6','In Review':'#f59e0b',Pending:'#8891a8','Matching Found':'#a855f7',Approved:'#22c55e','Pending Verification':'#f59e0b',Rejected:'#ef4444'};
+const EMOJI_MAP = {Electronics:'📱',Accessories:'👜','Daily Use':'🧴',Clothing:'👕',Keys:'🔑',Documents:'📄',Bags:'🎒',default:'📦'};
+const VIEW_TITLES = {home:'Campus Lost & Found',browse:'Browse Items',post:'Post Found Item',report:'Report Lost Item',reports:'My Reports',notifications:'Notifications',profile:'My Profile',saved:'Saved Items',claims:'Claim History',messages:'Messages',item:'Item Details',admin:'Admin Dashboard',chat:'',editprofile:'Edit Profile'};
+const NAV_ITEMS = [{key:'home',icon:'🏠',label:'Home'},{key:'browse',icon:'🔍',label:'Browse'},{key:'post',icon:'➕',label:'Post'},{key:'reports',icon:'📋',label:'Reports'},{key:'profile',icon:'👤',label:'Profile'}];
+const SUB_VIEWS = ['item','report','notifications','saved','claims','messages','chat','editprofile','admin'];
+
+let currentUser = null;
+let currentView = 'home';
+let viewHistory = [];
+let currentItem = null;
+let currentChatUser = null;
+let deferredInstall = null;
+
+/* ════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════ */
+function uid(){ return 'x'+Math.random().toString(36).slice(2,9); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(d){ return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}); }
+function timeAgo(d){ const diff=(Date.now()-new Date(d))/1000; if(diff<60)return 'just now'; if(diff<3600)return Math.floor(diff/60)+'m ago'; if(diff<86400)return Math.floor(diff/3600)+'h ago'; return Math.floor(diff/86400)+'d ago'; }
+function avatarGrad(name){ const g=['linear-gradient(135deg,#f5a623,#c4831a)','linear-gradient(135deg,#6366f1,#8b5cf6)','linear-gradient(135deg,#22c55e,#16a34a)','linear-gradient(135deg,#3b82f6,#1d4ed8)']; return g[(name||'A').charCodeAt(0)%4]; }
+function initials(name){ return (name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function avatar(name,size=36,extra=''){
+  return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${size*.35}px;background:${avatarGrad(name)};${extra}">${initials(name)}</div>`;
+}
+function badge(label,color){ return `<span class="badge" style="background:${color}22;color:${color}">${esc(label)}</span>`; }
+function pill(label,active,onclick){ return `<button class="pill ${active?'pill-active':'pill-inactive'}" onclick="${onclick}">${esc(label)}</button>`; }
+
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  const styles={success:{bg:'#22c55e22',border:'#22c55e55',color:'#22c55e'},error:{bg:'#ef444422',border:'#ef444455',color:'#ef4444'},info:{bg:'#3b82f622',border:'#3b82f655',color:'#60a5fa'}};
+  const s=styles[type]||styles.info;
+  el.style.background=s.bg;el.style.border=`1px solid ${s.border}`;el.style.color=s.color;
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+function openSheet(id){ document.getElementById('sheet-'+id).classList.add('open'); document.getElementById('sheet-'+id).onclick=e=>{ if(e.target===e.currentTarget)closeSheet(id); }; }
+function closeSheet(id){ document.getElementById('sheet-'+id).classList.remove('open'); }
+
+function goTo(view, payload=null){
+  if(payload) currentItem=payload;
+  viewHistory.push(currentView);
+  currentView=view;
+  render();
+  document.getElementById('content').scrollTop=0;
+}
+function goBack(){
+  currentView=viewHistory.pop()||'home';
+  render();
+  document.getElementById('content').scrollTop=0;
+}
+
+/* ════════════════════════════════════════════════
+   AUTH
+════════════════════════════════════════════════ */
+function renderAuth(tab='login'){
+  document.getElementById('app').style.display='none';
+  const el=document.getElementById('auth-screen');
+  el.style.display='flex';el.style.flexDirection='column';el.style.minHeight='100dvh';
+  el.innerHTML=`
+  <div class="auth-hero">
+    <div style="font-size:52px;margin-bottom:4px">🔍</div>
+    <div class="auth-logo">Find<span>It</span></div>
+    <div class="auth-tagline">Campus Lost & Found — reconnect what matters</div>
+  </div>
+  <div class="auth-body">
+    <div class="auth-tabs">
+      <button class="auth-tab ${tab==='login'?'active':''}" onclick="renderAuth('login')">Sign In</button>
+      <button class="auth-tab ${tab==='register'?'active':''}" onclick="renderAuth('register')">Register</button>
+    </div>
+    ${tab==='login'?`
+    <div class="stack fade-up">
+      <div><div class="label">Email Address</div><input class="inp" id="a-email" type="email" placeholder="you@university.edu"/></div>
+      <div style="position:relative"><div class="label">Password</div><div class="inp-wrap right-icon"><input class="inp" id="a-pass" type="password" placeholder="Enter password"/><button class="right-btn" onclick="togglePw('a-pass')">👁</button></div></div>
+      <button class="btn btn-primary btn-full" style="margin-top:4px" onclick="doLogin()">Sign In →</button>
+      <div style="text-align:center;font-size:13px;color:var(--muted)">Demo accounts:<br/><span style="color:var(--accent)">admin@findit.app</span> / admin123 &nbsp;·&nbsp; <span style="color:var(--accent)">bhanu@uni.edu</span> / pass123</div>
+    </div>
+    `:tab==='register'?`
+    <div class="stack fade-up">
+      <div><div class="label">Full Name</div><input class="inp" id="r-name" placeholder="Your full name"/></div>
+      <div><div class="label">Email Address</div><input class="inp" id="r-email" type="email" placeholder="you@university.edu"/></div>
+      <div style="position:relative"><div class="label">Password</div><div class="inp-wrap right-icon"><input class="inp" id="r-pass" type="password" placeholder="Min 6 characters"/><button class="right-btn" onclick="togglePw('r-pass')">👁</button></div></div>
+      <div><div class="label">Role</div><select class="inp" id="r-role"><option value="student">Student</option><option value="admin">Admin</option></select></div>
+      <button class="btn btn-primary btn-full" style="margin-top:4px" onclick="doRegister()">Create Account →</button>
+    </div>
+    `:''}
+  </div>`;
+}
+
+function togglePw(id){ const el=document.getElementById(id); el.type=el.type==='password'?'text':'password'; }
+
+function doLogin(){
+  const email=document.getElementById('a-email').value.trim().toLowerCase();
+  const pass=document.getElementById('a-pass').value;
+  if(!email||!pass){toast('Please fill in all fields','error');return;}
+  const users=DB.get('users');
+  const user=users.find(u=>u.email.toLowerCase()===email&&u.password===pass);
+  if(!user){toast('Invalid email or password','error');return;}
+  currentUser=user;
+  DB.set('session',user.id);
+  startApp();
+}
+
+function doRegister(){
+  const name=document.getElementById('r-name').value.trim();
+  const email=document.getElementById('r-email').value.trim().toLowerCase();
+  const pass=document.getElementById('r-pass').value;
+  const role=document.getElementById('r-role').value;
+  if(!name||!email||!pass){toast('Please fill in all fields','error');return;}
+  if(pass.length<6){toast('Password must be at least 6 characters','error');return;}
+  const users=DB.get('users');
+  if(users.find(u=>u.email.toLowerCase()===email)){toast('Email already registered','error');return;}
+  const newUser={id:'u_'+uid(),name,email,password:pass,role,avatar:initials(name),verified:false,joined:new Date().toLocaleDateString('en-GB',{month:'short',year:'numeric'}),bio:''};
+  users.push(newUser);DB.set('users',users);
+  currentUser=newUser;DB.set('session',newUser.id);
+  toast('Account created! Welcome 🎉','success');
+  startApp();
+}
+
+function doLogout(){
+  DB.set('session',null);currentUser=null;currentView='home';viewHistory=[];
+  renderAuth('login');
+}
+
+/* ════════════════════════════════════════════════
+   APP SHELL
+════════════════════════════════════════════════ */
+function startApp(){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  currentView='home';viewHistory=[];
+  render();
+}
+
+function render(){
+  renderTopbar();
+  renderContent();
+  renderBottomNav();
+}
+
+function renderTopbar(){
+  const tb=document.getElementById('topbar');
+  const isBack=SUB_VIEWS.includes(currentView);
+  const isAdmin=currentView==='admin';
+  const notifs=DB.get('notifs')||[];
+  const unread=notifs.filter(n=>n.userId===currentUser.id&&!n.read).length;
+  const msgs=DB.get('messages')||[];
+  const unreadMsg=msgs.filter(m=>m.to===currentUser.id&&!m.readBy?.includes(currentUser.id)).length;
+  
+  if(currentView==='chat'){
+    const chatTitle=currentChatUser?currentChatUser.name:'Messages';
+    tb.innerHTML=`
+      <button class="tb-back" onclick="goBack()">←</button>
+      <div style="margin-left:4px">${currentChatUser?avatar(currentChatUser.name,32):'🗨️'}</div>
+      <div style="flex:1;min-width:0;margin-left:4px">
+        <div class="tb-title">${esc(chatTitle)}</div>
+        <div class="tb-sub" style="color:var(--green)">● Online</div>
+      </div>`;
+    return;
+  }
+
+  const title = isAdmin?'Admin Dashboard':(VIEW_TITLES[currentView]||'FindIt');
+  tb.innerHTML=`
+    ${isBack?`<button class="tb-back" onclick="goBack()">←</button>`:`<div class="tb-logo">🔍</div>`}
+    <div style="flex:1;min-width:0;margin-left:${isBack?'4':'8'}px">
+      <div class="tb-title">${esc(title)}</div>
+      <div class="tb-sub">Campus Recovery System</div>
+    </div>
+    <div class="tb-actions">
+      <button class="tb-icon-btn" onclick="goTo('messages')" title="Messages">
+        💬${unreadMsg>0?`<span class="tb-badge"></span>`:''}
+      </button>
+      <button class="tb-icon-btn" onclick="goTo('notifications')" title="Notifications">
+        🔔${unread>0?`<span class="tb-badge"></span>`:''}
+      </button>
+      <button onclick="goTo('profile')" style="border:none;background:none;cursor:pointer;padding:0">${avatar(currentUser.name,36)}</button>
+    </div>`;
+}
+
+function renderBottomNav(){
+  const bn=document.getElementById('bottomnav');
+  const hide=currentView==='chat'||currentUser.role==='admin'&&currentView==='admin';
+  if(SUB_VIEWS.includes(currentView)){bn.style.display='none';return;}
+  bn.style.display='flex';
+  bn.innerHTML=NAV_ITEMS.map(n=>{
+    const active=currentView===n.key;
+    return `<button class="nav-btn ${active?'active':''}" onclick="navGo('${n.key}')">
+      <span class="nav-icon">${n.icon}</span>
+      <span class="nav-label">${n.label}</span>
+      ${active?'<div class="nav-dot"></div>':''}
+    </button>`;
+  }).join('');
+}
+
+function navGo(view){ currentView=view; viewHistory=[]; render(); document.getElementById('content').scrollTop=0; }
+
+function renderContent(){
+  const el=document.getElementById('content');
+  const renders={
+    home:renderHome,browse:renderBrowse,post:renderPost,report:renderReport,
+    reports:renderReports,notifications:renderNotifications,profile:renderProfile,
+    saved:renderSaved,claims:renderClaims,messages:renderMessages,chat:renderChat,
+    item:renderItemDetail,admin:renderAdmin,editprofile:renderEditProfile
+  };
+  const fn=renders[currentView]||(()=>`<div class="empty"><div class="empty-icon">🚧</div><div class="empty-text">Coming Soon</div></div>`);
+  el.innerHTML=`<div class="fade-up">${fn()}</div>`;
+  // re-attach any listeners
+  if(currentView==='chat') scrollChat();
+}
+
+/* ════════════════════════════════════════════════
+   HOME
+════════════════════════════════════════════════ */
+function renderHome(){
+  const items=DB.get('items')||[];
+  const reports=(DB.get('reports')||[]).filter(r=>r.userId===currentUser.id);
+  const notifs=(DB.get('notifs')||[]).filter(n=>n.userId===currentUser.id&&!n.read);
+  const recent=items.filter(i=>i.status!=='Claimed').slice(0,4);
+  return `
+  <div class="stack">
+    <div class="hero-card">
+      <div style="position:relative">
+        <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">✦ AI Smart Matching Active</div>
+        <div style="font-family:var(--font-head);font-size:24px;font-weight:800;line-height:1.25;margin-bottom:8px">Hey ${esc(currentUser.name.split(' ')[0])} 👋<br/>Lost something?</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:18px">Report it, browse found items, and get matched instantly.</div>
+        <div class="grid2">
+          <button class="btn btn-primary btn-full" onclick="goTo('report')">🔴 Report Lost</button>
+          <button class="btn btn-secondary btn-full" onclick="goTo('browse')">🟢 Browse Found</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-num">${items.filter(i=>i.status==='Found').length}</div><div class="stat-lbl">Found</div></div>
+      <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-num">${reports.length}</div><div class="stat-lbl">My Reports</div></div>
+      <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-num">92%</div><div class="stat-lbl">Success</div></div>
+    </div>
+
+    ${notifs.length>0?`
+    <div class="card-sm" style="background:#f5a6230a;border-color:#f5a62330;cursor:pointer;display:flex;align-items:center;gap:12px" onclick="goTo('notifications')">
+      <div style="font-size:24px">🔔</div>
+      <div style="flex:1"><div style="font-weight:700;color:var(--accent)">${notifs.length} new notification${notifs.length>1?'s':''}</div><div style="font-size:12px;color:var(--muted)">Tap to view</div></div>
+      <div style="color:var(--muted);font-size:18px">›</div>
+    </div>`:''}
+
+    ${currentUser.role==='admin'?`
+    <div class="card-sm" style="background:#a855f718;border-color:#a855f730;cursor:pointer;display:flex;align-items:center;gap:12px" onclick="goTo('admin')">
+      <div style="font-size:24px">🛡</div>
+      <div style="flex:1"><div style="font-weight:700;color:var(--purple)">Admin Dashboard</div><div style="font-size:12px;color:var(--muted)">Manage items, users, claims</div></div>
+      <div style="color:var(--muted);font-size:18px">›</div>
+    </div>`:''}
+
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="section-title" style="margin-bottom:0">Recently Found</div>
+      <button class="btn btn-ghost btn-sm" onclick="navGo('browse')">See all →</button>
+    </div>
+    <div class="stack">${recent.map(itemCard).join('')}</div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   ITEM CARD HTML
+════════════════════════════════════════════════ */
+function itemCard(item){
+  const sc=STATUS_COLOR[item.status]||'#8891a8';
+  const saved=(item.savedBy||[]).includes(currentUser.id);
+  return `
+  <div class="item-card" onclick="goTo('item','${item.id}')">
+    <div class="item-thumb">${item.emoji||EMOJI_MAP[item.category]||EMOJI_MAP.default}</div>
+    <div class="item-info">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div class="item-name">${esc(item.name)}</div>
+        ${badge(item.status,sc)}
+      </div>
+      <div class="item-desc">${esc(item.description)}</div>
+      <div class="item-meta">
+        <div class="item-loc">📍 ${esc(item.location)}</div>
+        <button class="heart-btn" onclick="event.stopPropagation();toggleSave('${item.id}')">${saved?'❤️':'🤍'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   BROWSE
+════════════════════════════════════════════════ */
+let browseQ='', browseCat='All', browseSt='All';
+function renderBrowse(){
+  const items=DB.get('items')||[];
+  const filtered=items.filter(it=>{
+    const hay=[it.name,it.location,it.description,it.category,it.color].join(' ').toLowerCase();
+    return (!browseQ.trim()||hay.includes(browseQ.toLowerCase()))&&(browseCat==='All'||it.category===browseCat)&&(browseSt==='All'||it.status===browseSt);
+  });
+  return `
+  <div class="stack">
+    <div class="inp-wrap"><span class="inp-icon">🔍</span><input class="inp" value="${esc(browseQ)}" oninput="browseQ=this.value;refreshBrowse()" placeholder="Search items, location, color…"/></div>
+    <div class="chip-row">${CATS.map(c=>pill(c,browseCat===c,`browseCat='${c}';refreshBrowse()`)).join('')}</div>
+    <div class="chip-row">${['All','Found','In Review','Claimed'].map(s=>pill(s,browseSt===s,`browseSt='${s}';refreshBrowse()`)).join('')}</div>
+    <div style="font-size:13px;color:var(--muted)">${filtered.length} item${filtered.length!==1?'s':''} found</div>
+    <div id="browse-list">
+      ${filtered.length===0?`<div class="empty"><div class="empty-icon">😕</div><div class="empty-text">No items match</div><div class="empty-sub">Try a different search or category</div></div>`:filtered.map(itemCard).join('')}
+    </div>
+  </div>`;
+}
+function refreshBrowse(){ if(currentView==='browse') renderContent(); }
+
+/* ════════════════════════════════════════════════
+   POST FOUND
+════════════════════════════════════════════════ */
+function renderPost(){
+  return `
+  <div class="stack">
+    <div class="card">
+      <div style="font-family:var(--font-head);font-size:17px;font-weight:700;margin-bottom:16px">📦 Post a Found Item</div>
+      <div class="stack">
+        <div><div class="label">Item Name *</div><input class="inp" id="p-name" placeholder="e.g. Blue Backpack"/></div>
+        <div><div class="label">Category</div><select class="inp" id="p-cat">${CATS.slice(1).map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div><div class="label">Where did you find it? *</div><input class="inp" id="p-loc" placeholder="e.g. Science Block B"/></div>
+        <div><div class="label">Color / Appearance</div><input class="inp" id="p-color" placeholder="e.g. Navy blue with yellow zip"/></div>
+        <div><div class="label">Description</div><textarea class="inp" id="p-desc" placeholder="Describe identifying features…"></textarea></div>
+        <button class="btn btn-secondary btn-full">📷 Add Photo (coming soon)</button>
+        <button class="btn btn-primary btn-full" onclick="submitPostFound()">Post Found Item →</button>
+      </div>
+    </div>
+    <div class="card-sm" style="background:#f5a6230a;border-color:#f5a62330">
+      <div style="font-weight:700;color:var(--accent)">⚡ AI Auto-Match</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5">After posting, our system checks for matching lost reports and notifies the owner automatically.</div>
+    </div>
+  </div>`;
+}
+function submitPostFound(){
+  const name=document.getElementById('p-name').value.trim();
+  const loc=document.getElementById('p-loc').value.trim();
+  const cat=document.getElementById('p-cat').value;
+  const color=document.getElementById('p-color').value.trim();
+  const desc=document.getElementById('p-desc').value.trim();
+  if(!name){toast('Item name is required','error');return;}
+  if(!loc){toast('Found location is required','error');return;}
+  const items=DB.get('items')||[];
+  const newItem={id:'i_'+uid(),name,category:cat,location:loc,description:desc,color,status:'Found',savedBy:[],postedBy:currentUser.id,date:new Date().toISOString().slice(0,10),emoji:EMOJI_MAP[cat]||EMOJI_MAP.default};
+  items.unshift(newItem);DB.set('items',items);
+  addNotif(currentUser.id,'Item Posted ✅','Your found item has been listed and is now visible to others.');
+  toast('Item posted successfully! ✅','success');
+  navGo('browse');
+}
+
+/* ════════════════════════════════════════════════
+   REPORT LOST
+════════════════════════════════════════════════ */
+function renderReport(){
+  return `
+  <div class="stack">
+    <div class="card">
+      <div style="font-family:var(--font-head);font-size:17px;font-weight:700;margin-bottom:16px">📝 New Lost Item Report</div>
+      <div class="stack">
+        <div><div class="label">Item Name *</div><input class="inp" id="rl-name" placeholder="e.g. Black Wallet"/></div>
+        <div><div class="label">Category</div><select class="inp" id="rl-cat">${CATS.slice(1).map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div><div class="label">Last Seen Location *</div><input class="inp" id="rl-loc" placeholder="e.g. Central Library"/></div>
+        <div><div class="label">Color / Appearance</div><input class="inp" id="rl-color" placeholder="e.g. Black with gold zip"/></div>
+        <div><div class="label">Description</div><textarea class="inp" id="rl-desc" placeholder="Describe the item in detail…"></textarea></div>
+        <button class="btn btn-secondary btn-full">📷 Attach Photo (coming soon)</button>
+        <button class="btn btn-primary btn-full" onclick="submitReport()">Submit Report →</button>
+      </div>
+    </div>
+    <div class="card-sm" style="background:#22c55e0a;border-color:#22c55e25">
+      <div style="font-weight:700;color:var(--green)">🔒 Privacy Protected</div>
+      <div style="font-size:13px;color:#4ade80;margin-top:6px;line-height:1.5">Your personal details are hidden until ownership is verified by admin.</div>
+    </div>
+  </div>`;
+}
+function submitReport(){
+  const name=document.getElementById('rl-name').value.trim();
+  const loc=document.getElementById('rl-loc').value.trim();
+  const cat=document.getElementById('rl-cat').value;
+  const color=document.getElementById('rl-color').value.trim();
+  const desc=document.getElementById('rl-desc').value.trim();
+  if(!name){toast('Item name is required','error');return;}
+  if(!loc){toast('Last seen location is required','error');return;}
+  const reports=DB.get('reports')||[];
+  reports.unshift({id:'r_'+uid(),title:name,category:cat,location:loc,description:desc,color,date:new Date().toISOString().slice(0,10),status:'Pending',userId:currentUser.id});
+  DB.set('reports',reports);
+  addNotif(currentUser.id,'Report Submitted','Your lost item report is now active. We\'ll notify you of any matches.');
+  toast('Report submitted! We\'ll notify you of matches ✅','success');
+  navGo('reports');
+}
+
+/* ════════════════════════════════════════════════
+   MY REPORTS
+════════════════════════════════════════════════ */
+function renderReports(){
+  const reports=(DB.get('reports')||[]).filter(r=>r.userId===currentUser.id);
+  if(reports.length===0) return `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No reports yet</div><div class="empty-sub">Report a lost item to get started</div><button class="btn btn-primary" style="margin-top:16px" onclick="goTo('report')">Report Lost Item</button></div>`;
+  return `
+  <div class="stack">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <div style="font-family:var(--font-head);font-size:17px;font-weight:700">My Reports (${reports.length})</div>
+      <button class="btn btn-primary btn-sm" onclick="goTo('report')">+ New</button>
+    </div>
+    ${reports.map(r=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:10px">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:15px">${esc(r.title)}</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px">${esc(r.description||'No description.')}</div>
+          <div style="font-size:12px;color:var(--muted2);margin-top:6px">📍 ${esc(r.location)} · ${r.date}</div>
+        </div>
+        ${badge(r.status,STATUS_COLOR[r.status]||'#8891a8')}
+      </div>
+      <div class="divider"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        ${badge(r.category,'#8891a8')}
+        <div style="flex:1"></div>
+        <button class="btn btn-danger btn-sm" onclick="deleteReport('${r.id}')">🗑 Delete</button>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+function deleteReport(id){
+  const reports=DB.get('reports')||[];
+  DB.set('reports',reports.filter(r=>r.id!==id));
+  toast('Report deleted','info'); renderContent();
+}
+
+/* ════════════════════════════════════════════════
+   NOTIFICATIONS
+════════════════════════════════════════════════ */
+function renderNotifications(){
+  const notifs=(DB.get('notifs')||[]).filter(n=>n.userId===currentUser.id);
+  const unread=notifs.filter(n=>!n.read).length;
+  return `
+  <div class="stack">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:var(--font-head);font-size:17px;font-weight:700">Notifications ${unread>0?`<span style="font-size:13px;color:var(--muted);font-weight:400">(${unread} new)</span>`:''}</div>
+      ${unread>0?`<button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>`:''}
+    </div>
+    ${notifs.length===0?`<div class="empty"><div class="empty-icon">🔔</div><div class="empty-text">No notifications</div></div>`:''}
+    ${notifs.map(n=>`
+    <div class="notif-row ${n.read?'':'unread'}" onclick="markRead('${n.id}')">
+      <div class="notif-icon" style="background:${n.read?'var(--card2)':'#f5a62318'}">${n.read?'🔔':'🔔'}</div>
+      <div style="flex:1">
+        <div style="font-weight:700;color:${n.read?'var(--muted)':'var(--text)'}">${esc(n.title)}</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4">${esc(n.text)}</div>
+        <div style="font-size:11px;color:var(--muted2);margin-top:6px">${n.time}</div>
+      </div>
+      ${!n.read?'<div class="unread-dot"></div>':''}
+    </div>`).join('')}
+    ${notifs.length>0?`<button class="btn btn-ghost btn-full btn-sm" onclick="clearAllNotifs()">Clear All Notifications</button>`:''}
+  </div>`;
+}
+function markRead(id){
+  const notifs=DB.get('notifs')||[];
+  const n=notifs.find(x=>x.id===id);
+  if(n)n.read=true;DB.set('notifs',notifs);renderContent();renderTopbar();
+}
+function markAllRead(){
+  const notifs=DB.get('notifs')||[];
+  notifs.forEach(n=>{if(n.userId===currentUser.id)n.read=true;});
+  DB.set('notifs',notifs);toast('All notifications read','info');renderContent();renderTopbar();
+}
+function clearAllNotifs(){
+  const notifs=(DB.get('notifs')||[]).filter(n=>n.userId!==currentUser.id);
+  DB.set('notifs',notifs);toast('Cleared','info');renderContent();renderTopbar();
+}
+function addNotif(userId,title,text){
+  const notifs=DB.get('notifs')||[];
+  notifs.unshift({id:'n_'+uid(),userId,title,text,read:false,time:'just now'});
+  DB.set('notifs',notifs);
+}
+
+/* ════════════════════════════════════════════════
+   PROFILE
+════════════════════════════════════════════════ */
+function renderProfile(){
+  const items=DB.get('items')||[];
+  const reports=(DB.get('reports')||[]).filter(r=>r.userId===currentUser.id);
+  const claims=(DB.get('claims')||[]).filter(c=>c.userId===currentUser.id);
+  const saved=items.filter(i=>(i.savedBy||[]).includes(currentUser.id)).length;
+  const notifs=(DB.get('notifs')||[]).filter(n=>n.userId===currentUser.id&&!n.read).length;
+  const links=[
+    {icon:'❤️',title:'Saved Items',sub:`${saved} items`,key:'saved'},
+    {icon:'🗂',title:'Claim History',sub:`${claims.length} claims`,key:'claims'},
+    {icon:'🔔',title:'Notifications',sub:notifs>0?`${notifs} unread`:'All read',key:'notifications'},
+    {icon:'📑',title:'My Reports',sub:`${reports.length} active`,key:'reports'},
+    ...(currentUser.role==='admin'?[{icon:'🛡',title:'Admin Dashboard',sub:'Manage the system',key:'admin'}]:[]),
+  ];
+  return `
+  <div class="stack">
+    <div class="card">
+      <div style="display:flex;gap:14px;align-items:center;margin-bottom:16px">
+        ${avatar(currentUser.name,56,'border-radius:18px')}
+        <div style="flex:1">
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800">${esc(currentUser.name)}</div>
+          <div style="font-size:13px;color:var(--muted)">${esc(currentUser.email)}</div>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+            ${currentUser.verified?badge('✓ Verified','#22c55e'):''}
+            ${badge(currentUser.role,'#3b82f6')}
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="goTo('editprofile')">✏️ Edit</button>
+      </div>
+      ${currentUser.bio?`<div style="font-size:13px;color:var(--muted);margin-bottom:14px;padding:10px;background:var(--card2);border-radius:10px">${esc(currentUser.bio)}</div>`:''}
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-top:1px solid var(--border);padding-top:14px">
+        ${[[items.length,'Items'],[reports.length,'Reports'],[claims.length,'Claims']].map(([n,l])=>`<div style="text-align:center"><div style="font-family:var(--font-head);font-size:22px;font-weight:800">${n}</div><div style="font-size:11px;color:var(--muted)">${l}</div></div>`).join('')}
+      </div>
+    </div>
+
+    ${links.map(l=>`
+    <div class="card-sm" style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="goTo('${l.key}')">
+      <div class="profile-link-icon">${l.icon}</div>
+      <div style="flex:1"><div style="font-weight:700">${l.title}</div><div style="font-size:12px;color:var(--muted)">${l.sub}</div></div>
+      <div class="profile-link-arrow">›</div>
+    </div>`).join('')}
+
+    <div class="divider" style="margin:4px 0"></div>
+    <button class="btn btn-ghost btn-full" onclick="doLogout()">🚪 Sign Out</button>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   EDIT PROFILE
+════════════════════════════════════════════════ */
+function renderEditProfile(){
+  return `
+  <div class="stack">
+    <div class="card">
+      <div style="font-family:var(--font-head);font-size:17px;font-weight:700;margin-bottom:16px">✏️ Edit Profile</div>
+      <div class="stack">
+        <div style="display:flex;justify-content:center;margin-bottom:8px">${avatar(currentUser.name,72,'border-radius:22px')}</div>
+        <div><div class="label">Full Name</div><input class="inp" id="ep-name" value="${esc(currentUser.name)}" placeholder="Full name"/></div>
+        <div><div class="label">Email</div><input class="inp" id="ep-email" type="email" value="${esc(currentUser.email)}" placeholder="Email"/></div>
+        <div><div class="label">Bio</div><textarea class="inp" id="ep-bio" placeholder="Tell us about yourself…">${esc(currentUser.bio||'')}</textarea></div>
+        <div class="divider"></div>
+        <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--muted)">Change Password</div>
+        <div><div class="label">Current Password</div><input class="inp" id="ep-oldpass" type="password" placeholder="Current password"/></div>
+        <div><div class="label">New Password</div><input class="inp" id="ep-newpass" type="password" placeholder="New password (min 6 chars)"/></div>
+        <button class="btn btn-primary btn-full" onclick="saveProfile()">Save Changes</button>
+        <button class="btn btn-ghost btn-full" onclick="goBack()">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+}
+function saveProfile(){
+  const name=document.getElementById('ep-name').value.trim();
+  const email=document.getElementById('ep-email').value.trim().toLowerCase();
+  const bio=document.getElementById('ep-bio').value.trim();
+  const oldPass=document.getElementById('ep-oldpass').value;
+  const newPass=document.getElementById('ep-newpass').value;
+  if(!name||!email){toast('Name and email are required','error');return;}
+  const users=DB.get('users')||[];
+  const emailTaken=users.find(u=>u.email.toLowerCase()===email&&u.id!==currentUser.id);
+  if(emailTaken){toast('Email already in use','error');return;}
+  if(oldPass||newPass){
+    if(!oldPass){toast('Enter your current password','error');return;}
+    if(oldPass!==currentUser.password){toast('Current password is incorrect','error');return;}
+    if(newPass.length<6){toast('New password must be at least 6 characters','error');return;}
+    currentUser.password=newPass;
+  }
+  currentUser.name=name;currentUser.email=email;currentUser.bio=bio;
+  const idx=users.findIndex(u=>u.id===currentUser.id);
+  if(idx>-1)users[idx]=currentUser;
+  DB.set('users',users);DB.set('session',currentUser.id);
+  toast('Profile updated ✅','success');goBack();
+}
+
+/* ════════════════════════════════════════════════
+   SAVED ITEMS
+════════════════════════════════════════════════ */
+function renderSaved(){
+  const items=(DB.get('items')||[]).filter(i=>(i.savedBy||[]).includes(currentUser.id));
+  if(items.length===0) return `<div class="empty"><div class="empty-icon">❤️</div><div class="empty-text">No saved items</div><div class="empty-sub">Heart items while browsing to save them here</div></div>`;
+  return `<div class="stack"><div style="font-family:var(--font-head);font-size:17px;font-weight:700;margin-bottom:4px">Saved Items (${items.length})</div>${items.map(itemCard).join('')}</div>`;
+}
+function toggleSave(itemId){
+  const items=DB.get('items')||[];
+  const item=items.find(i=>i.id===itemId);
+  if(!item)return;
+  if(!item.savedBy)item.savedBy=[];
+  const idx=item.savedBy.indexOf(currentUser.id);
+  if(idx>-1){item.savedBy.splice(idx,1);toast('Removed from saved','info');}
+  else{item.savedBy.push(currentUser.id);toast('Saved! ❤️','success');}
+  DB.set('items',items);
+  renderContent();
+}
+
+/* ════════════════════════════════════════════════
+   CLAIMS
+════════════════════════════════════════════════ */
+function renderClaims(){
+  const claims=(DB.get('claims')||[]).filter(c=>c.userId===currentUser.id);
+  if(claims.length===0) return `<div class="empty"><div class="empty-icon">🗂</div><div class="empty-text">No claims yet</div><div class="empty-sub">Claim a found item to see it here</div></div>`;
+  return `
+  <div class="stack">
+    <div style="font-family:var(--font-head);font-size:17px;font-weight:700">Claim History (${claims.length})</div>
+    ${claims.map(c=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:${c.note||c.status==='Pending Verification'?10:0}px">
+        <div><div style="font-weight:700">${esc(c.item)}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Submitted: ${c.date}</div></div>
+        ${badge(c.status,STATUS_COLOR[c.status]||'#8891a8')}
+      </div>
+      ${c.note?`<div style="font-size:13px;color:var(--muted);background:var(--card2);border-radius:10px;padding:10px;margin-bottom:10px">${esc(c.note)}</div>`:''}
+      ${c.status==='Pending Verification'?`<button class="btn btn-danger btn-sm btn-full" onclick="withdrawClaim('${c.id}')">Withdraw Claim</button>`:''}
+    </div>`).join('')}
+  </div>`;
+}
+function withdrawClaim(id){
+  const claims=DB.get('claims')||[];
+  DB.set('claims',claims.filter(c=>c.id!==id));
+  toast('Claim withdrawn','info');renderContent();
+}
+
+/* ════════════════════════════════════════════════
+   ITEM DETAIL
+════════════════════════════════════════════════ */
+function renderItemDetail(){
+  const items=DB.get('items')||[];
+  const item=typeof currentItem==='string'?items.find(i=>i.id===currentItem):items.find(i=>i.id===currentItem?.id)||currentItem;
+  if(!item)return `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Item not found</div></div>`;
+  const sc=STATUS_COLOR[item.status]||'#8891a8';
+  const saved=(item.savedBy||[]).includes(currentUser.id);
+  const claims=DB.get('claims')||[];
+  const alreadyClaimed=claims.some(c=>c.itemId===item.id&&c.userId===currentUser.id);
+  const poster=(DB.get('users')||[]).find(u=>u.id===item.postedBy);
+  return `
+  <div class="stack">
+    <div style="height:170px;border-radius:var(--rXl);background:linear-gradient(135deg,#1a1f2e,#252b3a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid var(--border)">
+      <div style="font-size:64px">${item.emoji||EMOJI_MAP[item.category]||EMOJI_MAP.default}</div>
+      <div style="font-size:12px;color:var(--muted)">Item Photo</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+        <div style="font-family:var(--font-head);font-size:20px;font-weight:800;flex:1">${esc(item.name)}</div>
+        ${badge(item.status,sc)}
+      </div>
+      <div style="font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:14px">${esc(item.description)}</div>
+      <div class="grid2">
+        <div class="info-tile"><div class="lbl">Category</div><div class="val">${esc(item.category)}</div></div>
+        <div class="info-tile"><div class="lbl">Color</div><div class="val">${esc(item.color||'—')}</div></div>
+        <div class="info-tile" style="grid-column:1/span 2"><div class="lbl">Found At</div><div class="val">📍 ${esc(item.location)}</div></div>
+        <div class="info-tile" style="grid-column:1/span 2"><div class="lbl">Date Posted</div><div class="val">${item.date}</div></div>
+      </div>
+    </div>
+
+    ${poster?`
+    <div class="card-sm" style="display:flex;align-items:center;gap:12px">
+      ${avatar(poster.name,42,'border-radius:14px')}
+      <div style="flex:1">
+        <div style="font-weight:700">${esc(poster.name)}</div>
+        <div style="font-size:12px;color:var(--muted)">Posted by ${poster.id===currentUser.id?'you':poster.role}</div>
+      </div>
+      ${poster.id!==currentUser.id?`<button class="btn btn-secondary btn-sm" onclick="openChatWith('${poster.id}')">💬 Message</button>`:''}
+    </div>`:''}
+
+    <div class="card-sm" style="background:#3b82f60a;border-color:#3b82f625">
+      <div style="font-weight:700;color:#60a5fa;margin-bottom:8px">🛡 Verification Process</div>
+      ${['Provide hidden item details only the owner would know','Admin cross-checks your claim with the finder','Item released once verification is complete'].map((t,i)=>`
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-top:8px">
+        <div style="min-width:22px;height:22px;border-radius:50%;background:#3b82f620;color:#60a5fa;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">${i+1}</div>
+        <div style="font-size:13px;color:#93c5fd;line-height:1.45">${t}</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="stack">
+      <button class="btn btn-secondary btn-full" onclick="toggleSave('${item.id}')">${saved?'❤️ Remove from Saved':'🤍 Save Item'}</button>
+      ${poster&&poster.id!==currentUser.id?`<button class="btn btn-secondary btn-full" onclick="openChatWith('${poster.id}')">💬 Message Finder</button>`:''}
+      ${item.status!=='Claimed'?(alreadyClaimed
+        ?`<button class="btn btn-ghost btn-full" disabled>✋ Claim Already Submitted</button>`
+        :`<button class="btn btn-primary btn-full" onclick="openClaimSheet('${item.id}')">✋ Claim This Item</button>`):''}
+    </div>
+  </div>`;
+}
+function openClaimSheet(itemId){
+  document.getElementById('claim-proof').value='';
+  document.getElementById('claim-contact').value='';
+  document.getElementById('sheet-claim').dataset.itemId=itemId;
+  openSheet('claim');
+}
+function submitClaim(){
+  const proof=document.getElementById('claim-proof').value.trim();
+  const contact=document.getElementById('claim-contact').value.trim();
+  if(!proof){toast('Please provide proof of ownership','error');return;}
+  const itemId=document.getElementById('sheet-claim').dataset.itemId;
+  const items=DB.get('items')||[];
+  const item=items.find(i=>i.id===itemId);
+  if(!item){toast('Item not found','error');return;}
+  const claims=DB.get('claims')||[];
+  claims.unshift({id:'c_'+uid(),itemId,item:item.name,status:'Pending Verification',date:'Today',userId:currentUser.id,proof,contact});
+  DB.set('claims',claims);
+  // notify admin
+  const admins=(DB.get('users')||[]).filter(u=>u.role==='admin');
+  admins.forEach(a=>addNotif(a.id,'New Claim Submitted',`${currentUser.name} claimed "${item.name}". Review required.`));
+  closeSheet('claim');toast('Claim submitted for review ✅','success');renderContent();
+}
+
+/* ════════════════════════════════════════════════
+   MESSAGES
+════════════════════════════════════════════════ */
+function renderMessages(){
+  const msgs=DB.get('messages')||[];
+  const users=DB.get('users')||[];
+  // Get unique conversations
+  const convMap={};
+  msgs.forEach(m=>{
+    const otherId=m.from===currentUser.id?m.to:m.from;
+    if(otherId===currentUser.id)return;
+    if(!convMap[otherId]||new Date(m.ts||0)>new Date(convMap[otherId].ts||0)) convMap[otherId]={...m,otherId};
+  });
+  const convs=Object.values(convMap).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const otherUsers=users.filter(u=>u.id!==currentUser.id&&u.id!==currentUser.id);
+
+  return `
+  <div class="stack">
+    <div style="font-family:var(--font-head);font-size:17px;font-weight:700;margin-bottom:4px">Messages</div>
+    ${convs.length===0&&otherUsers.length===0?`<div class="empty"><div class="empty-icon">💬</div><div class="empty-text">No messages yet</div><div class="empty-sub">Start a conversation from an item's detail page</div></div>`:''}
+    ${convs.map(c=>{
+      const other=users.find(u=>u.id===c.otherId);
+      if(!other)return '';
+      const unread=msgs.filter(m=>m.from===other.id&&m.to===currentUser.id&&!m.readBy?.includes(currentUser.id)).length;
+      return `
+      <div class="card-sm" style="display:flex;align-items:center;gap:12px;cursor:pointer" onclick="openChatWith('${other.id}')">
+        ${avatar(other.name,44,'border-radius:14px')}
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700">${esc(other.name)}</div>
+          <div style="font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.text)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div style="font-size:11px;color:var(--muted2)">${c.time||''}</div>
+          ${unread>0?`<div style="width:20px;height:20px;background:var(--accent);color:#0f1117;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${unread}</div>`:''}
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="margin-top:8px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">All Users</div>
+      ${otherUsers.map(u=>`
+      <div class="card-sm" style="display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:8px" onclick="openChatWith('${u.id}')">
+        ${avatar(u.name,40,'border-radius:14px')}
+        <div style="flex:1"><div style="font-weight:700">${esc(u.name)}</div><div style="font-size:12px;color:var(--muted)">${esc(u.role)}</div></div>
+        <button class="btn btn-ghost btn-sm">Chat</button>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function openChatWith(userId){
+  const users=DB.get('users')||[];
+  currentChatUser=users.find(u=>u.id===userId);
+  // mark messages as read
+  const msgs=DB.get('messages')||[];
+  msgs.forEach(m=>{if(m.from===userId&&m.to===currentUser.id){if(!m.readBy)m.readBy=[];if(!m.readBy.includes(currentUser.id))m.readBy.push(currentUser.id);}});
+  DB.set('messages',msgs);
+  goTo('chat');
+}
+
+function renderChat(){
+  if(!currentChatUser)return `<div class="empty"><div>No chat selected</div></div>`;
+  const msgs=DB.get('messages')||[];
+  const thread=msgs.filter(m=>(m.from===currentUser.id&&m.to===currentChatUser.id)||(m.from===currentChatUser.id&&m.to===currentUser.id));
+  return `
+  <div style="display:flex;flex-direction:column;height:100%;padding-bottom:0">
+    <div id="chat-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding-bottom:80px">
+      ${thread.length===0?`<div class="empty" style="padding:40px 0"><div class="empty-icon">💬</div><div class="empty-text">Start the conversation</div></div>`:''}
+      ${thread.map(m=>{
+        const isMe=m.from===currentUser.id;
+        return `<div class="${isMe?'msg-me-wrap':'msg-them-wrap'}">
+          <div class="msg-bubble ${isMe?'me':'them'}">${esc(m.text)}</div>
+          <div class="msg-time">${m.time||''}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="position:fixed;bottom:0;left:0;right:0;max-width:500px;margin:0 auto;background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;padding-bottom:calc(12px + var(--safe-bot));display:flex;gap:8px">
+      <input class="inp" id="chat-input" placeholder="Type a message…" style="flex:1" onkeydown="if(event.key==='Enter')sendChatMsg()"/>
+      <button class="btn btn-primary btn-sm" onclick="sendChatMsg()">Send</button>
+    </div>
+  </div>`;
+}
+function scrollChat(){ setTimeout(()=>{const el=document.getElementById('chat-messages');if(el)el.scrollTop=el.scrollHeight;},50); }
+function sendChatMsg(){
+  const inp=document.getElementById('chat-input');
+  if(!inp)return;
+  const text=inp.value.trim();
+  if(!text)return;
+  const msgs=DB.get('messages')||[];
+  const now=new Date();
+  msgs.push({id:'m_'+uid(),from:currentUser.id,to:currentChatUser.id,text,time:now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),ts:Date.now(),readBy:[currentUser.id]});
+  DB.set('messages',msgs);
+  inp.value='';
+  addNotif(currentChatUser.id,`New message from ${currentUser.name}`,text.length>50?text.slice(0,50)+'…':text);
+  renderContent();scrollChat();
+}
+function sendMessage(){
+  const inp=document.getElementById('msg-input');
+  if(!inp)return;
+  const text=inp.value.trim();
+  if(!text||!currentChatUser)return;
+  const msgs=DB.get('messages')||[];
+  const now=new Date();
+  msgs.push({id:'m_'+uid(),from:currentUser.id,to:currentChatUser.id,text,time:now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),ts:Date.now(),readBy:[currentUser.id]});
+  DB.set('messages',msgs);inp.value='';
+  renderMsgThread();
+}
+function renderMsgThread(){
+  const el=document.getElementById('msg-thread');if(!el)return;
+  const msgs=DB.get('messages')||[];
+  const thread=msgs.filter(m=>(m.from===currentUser.id&&m.to===currentChatUser.id)||(m.from===currentChatUser.id&&m.to===currentUser.id));
+  el.innerHTML=thread.map(m=>{
+    const isMe=m.from===currentUser.id;
+    return `<div class="${isMe?'msg-me-wrap':'msg-them-wrap'}">
+      <div class="msg-bubble ${isMe?'me':'them'}">${esc(m.text)}</div>
+      <div class="msg-time">${m.time||''}</div>
+    </div>`;
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+/* ════════════════════════════════════════════════
+   ADMIN DASHBOARD
+════════════════════════════════════════════════ */
+let adminTab='overview';
+function renderAdmin(){
+  if(currentUser.role!=='admin')return `<div class="empty"><div>Access denied</div></div>`;
+  const items=DB.get('items')||[];
+  const reports=DB.get('reports')||[];
+  const claims=DB.get('claims')||[];
+  const users=DB.get('users')||[];
+  const notifs=DB.get('notifs')||[];
+  
+  const tabs=['overview','items','reports','claims','users'];
+  return `
+  <div class="stack">
+    <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:var(--rXl);padding:18px;border:1px solid #4338ca44">
+      <div style="font-size:11px;font-weight:700;color:#a5b4fc;letter-spacing:2px;text-transform:uppercase">Admin Dashboard</div>
+      <div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-top:4px">System Overview</div>
+    </div>
+    <div class="admin-tabs">${tabs.map(t=>`<button class="pill ${adminTab===t?'pill-active':'pill-inactive'}" onclick="adminTab='${t}';renderContent()">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}</div>
+    <div id="admin-body">${renderAdminTab(adminTab,items,reports,claims,users,notifs)}</div>
+  </div>`;
+}
+
+function renderAdminTab(tab,items,reports,claims,users,notifs){
+  const pendingClaims=claims.filter(c=>c.status==='Pending Verification');
+  if(tab==='overview') return `
+  <div class="stack">
+    <div class="grid2">
+      ${[['📦',items.length,'Items','#f5a623'],['📋',reports.length,'Reports','#3b82f6'],['🗂',claims.length,'Claims','#22c55e'],['👥',users.length,'Users','#a855f7']].map(([ic,n,l,col])=>`
+      <div class="stat-card"><div style="font-size:24px">${ic}</div><div class="stat-num" style="color:${col}">${n}</div><div class="stat-lbl">${l}</div></div>`).join('')}
+    </div>
+    ${pendingClaims.length>0?`
+    <div class="card">
+      <div style="font-weight:700;color:var(--text);margin-bottom:10px">⚠️ Pending Claims (${pendingClaims.length})</div>
+      ${pendingClaims.map(c=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div><div style="font-weight:600;font-size:14px">${esc(c.item)}</div><div style="font-size:12px;color:var(--muted)">${esc(c.proof?.slice(0,60)||'')}…</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-success btn-xs" onclick="adminApproveClaim('${c.id}')">✓</button>
+          <button class="btn btn-danger btn-xs" onclick="adminRejectClaim('${c.id}')">✗</button>
+        </div>
+      </div>`).join('')}
+    </div>`:`<div class="card-sm" style="background:#22c55e0a;border-color:#22c55e25;text-align:center;color:var(--green);font-weight:700">✅ No pending claims</div>`}
+    <div class="card">
+      <div style="font-weight:700;color:var(--text);margin-bottom:10px">📊 Recent Activity</div>
+      ${reports.slice(0,3).map(r=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><div>${esc(r.title)}</div>${badge(r.status,STATUS_COLOR[r.status]||'#8891a8')}</div>`).join('')}
+    </div>
+  </div>`;
+
+  if(tab==='items') return `
+  <div class="stack">
+    <div style="display:flex;gap:8px;margin-bottom:4px">
+      <button class="btn btn-primary btn-sm" onclick="goTo('post')">+ Add Found Item</button>
+    </div>
+    ${items.map(it=>`
+    <div class="card-sm">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+        <div style="font-size:30px;flex-shrink:0">${it.emoji||EMOJI_MAP[it.category]||'📦'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.name)}</div>
+          <div style="font-size:12px;color:var(--muted)">📍 ${esc(it.location)} · ${esc(it.category)}</div>
+        </div>
+        ${badge(it.status,STATUS_COLOR[it.status]||'#8891a8')}
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${it.status!=='Claimed'?`<button class="btn btn-success btn-xs" onclick="adminMarkClaimed('${it.id}')">✓ Mark Claimed</button>`:''}
+        <button class="btn btn-secondary btn-xs" onclick="adminEditItem('${it.id}')">✏️ Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="adminDeleteItem('${it.id}')">🗑 Delete</button>
+      </div>
+    </div>`).join('')}
+  </div>`;
+
+  if(tab==='reports') return `
+  <div class="stack">
+    ${reports.length===0?`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No reports</div></div>`:''}
+    ${reports.map(r=>`
+    <div class="card-sm">
+      <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:8px">
+        <div style="flex:1"><div style="font-weight:700">${esc(r.title)}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">📍 ${esc(r.location)} · ${r.date}</div></div>
+        ${badge(r.status,STATUS_COLOR[r.status]||'#8891a8')}
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">${esc(r.description||'')}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-success btn-xs" onclick="adminUpdateReportStatus('${r.id}','Matching Found')">✓ Match Found</button>
+        <button class="btn btn-secondary btn-xs" onclick="adminUpdateReportStatus('${r.id}','Resolved')">Resolved</button>
+        <button class="btn btn-danger btn-xs" onclick="adminDeleteReport('${r.id}')">🗑</button>
+      </div>
+    </div>`).join('')}
+  </div>`;
+
+  if(tab==='claims') return `
+  <div class="stack">
+    ${claims.length===0?`<div class="empty"><div class="empty-icon">🗂</div><div class="empty-text">No claims</div></div>`:''}
+    ${claims.map(c=>`
+    <div class="card-sm">
+      <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:8px">
+        <div><div style="font-weight:700">${esc(c.item)}</div><div style="font-size:12px;color:var(--muted);margin-top:2px">${c.date}</div></div>
+        ${badge(c.status,STATUS_COLOR[c.status]||'#8891a8')}
+      </div>
+      ${c.proof?`<div style="font-size:13px;color:var(--muted);background:var(--card2);border-radius:10px;padding:8px 12px;margin-bottom:8px;line-height:1.4">💬 "${esc(c.proof)}"</div>`:''}
+      ${c.status==='Pending Verification'?`<div style="display:flex;gap:6px">
+        <button class="btn btn-success btn-sm" style="flex:1" onclick="adminApproveClaim('${c.id}')">✓ Approve</button>
+        <button class="btn btn-danger btn-sm" style="flex:1" onclick="adminRejectClaim('${c.id}')">✗ Reject</button>
+      </div>`:''}
+    </div>`).join('')}
+  </div>`;
+
+  if(tab==='users'){
+    const [userQ,setUserQ]=[window._adminUserQ||'',v=>{window._adminUserQ=v;}];
+    const filtered=users.filter(u=>[u.name,u.email,u.role].join(' ').toLowerCase().includes(userQ.toLowerCase()));
+    return `
+  <div class="stack">
+    <input class="inp" value="${esc(userQ)}" oninput="window._adminUserQ=this.value;renderContent()" placeholder="🔍 Search users…"/>
+    ${filtered.map(u=>`
+    <div class="card-sm" style="display:flex;gap:12px;align-items:center">
+      ${avatar(u.name,42,'border-radius:14px')}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700">${esc(u.name)}</div>
+        <div style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.email)}</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+          ${badge(u.role,u.role==='admin'?'#a855f7':'#3b82f6')}
+          ${badge(u.verified?'✓ Verified':'Unverified',u.verified?'#22c55e':'#f59e0b')}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        ${u.id!==currentUser.id?`<button class="btn btn-ghost btn-xs" onclick="adminToggleVerify('${u.id}')">${u.verified?'Unverify':'Verify'}</button>`:''}
+        ${u.role!=='admin'?`<button class="btn btn-secondary btn-xs" onclick="adminMakeAdmin('${u.id}')">Make Admin</button>`:''}
+      </div>
+    </div>`).join('')}
+  </div>`;
+  }
+  return '';
+}
+
+/* Admin actions */
+function adminMarkClaimed(id){
+  const items=DB.get('items')||[];
+  const it=items.find(i=>i.id===id);if(it)it.status='Claimed';
+  DB.set('items',items);toast('Marked as Claimed','success');renderContent();
+}
+function adminDeleteItem(id){
+  if(!confirm('Delete this item?'))return;
+  DB.set('items',(DB.get('items')||[]).filter(i=>i.id!==id));
+  toast('Item deleted','info');renderContent();
+}
+function adminEditItem(id){
+  const items=DB.get('items')||[];
+  const it=items.find(i=>i.id===id);if(!it)return;
+  document.getElementById('edit-item-id').value=id;
+  document.getElementById('edit-name').value=it.name;
+  document.getElementById('edit-location').value=it.location;
+  document.getElementById('edit-status').value=it.status;
+  document.getElementById('edit-desc').value=it.description;
+  openSheet('edititem');
+}
+function saveEditItem(){
+  const id=document.getElementById('edit-item-id').value;
+  const items=DB.get('items')||[];
+  const it=items.find(i=>i.id===id);if(!it)return;
+  it.name=document.getElementById('edit-name').value.trim();
+  it.location=document.getElementById('edit-location').value.trim();
+  it.status=document.getElementById('edit-status').value;
+  it.description=document.getElementById('edit-desc').value.trim();
+  DB.set('items',items);closeSheet('edititem');toast('Item updated ✅','success');renderContent();
+}
+function adminApproveClaim(id){
+  const claims=DB.get('claims')||[];
+  const c=claims.find(x=>x.id===id);if(!c)return;
+  c.status='Approved';c.note='Verified by admin. You can collect your item.';
+  DB.set('claims',claims);
+  addNotif(c.userId,'Claim Approved! 🎉',`Your claim for "${c.item}" has been approved. Please collect from the admin office.`);
+  // update item status
+  const items=DB.get('items')||[];
+  const it=items.find(i=>i.id===c.itemId);if(it)it.status='Claimed';DB.set('items',items);
+  toast('Claim approved ✅','success');renderContent();
+}
+function adminRejectClaim(id){
+  const claims=DB.get('claims')||[];
+  const c=claims.find(x=>x.id===id);if(!c)return;
+  c.status='Rejected';c.note='Your claim was not verified. Please contact admin for more info.';
+  DB.set('claims',claims);
+  addNotif(c.userId,'Claim Rejected',`Your claim for "${c.item}" could not be verified.`);
+  toast('Claim rejected','info');renderContent();
+}
+function adminUpdateReportStatus(id,status){
+  const reports=DB.get('reports')||[];
+  const r=reports.find(x=>x.id===id);if(r)r.status=status;DB.set('reports',reports);
+  if(status==='Matching Found') addNotif(r.userId,'Match Found! 🎉',`We found a possible match for your report "${r.title}".`);
+  toast(`Status updated to ${status}`,'success');renderContent();
+}
+function adminDeleteReport(id){
+  DB.set('reports',(DB.get('reports')||[]).filter(r=>r.id!==id));
+  toast('Report deleted','info');renderContent();
+}
+function adminToggleVerify(id){
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===id);if(u)u.verified=!u.verified;DB.set('users',users);
+  toast(`User ${u.verified?'verified':'unverified'}`,'success');renderContent();
+}
+function adminMakeAdmin(id){
+  if(!confirm('Make this user an admin?'))return;
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===id);if(u)u.role='admin';DB.set('users',users);
+  addNotif(id,'You are now an Admin','Your role has been upgraded to administrator.');
+  toast('User is now an admin','success');renderContent();
+}
+
+/* ════════════════════════════════════════════════
+   PWA + SERVICE WORKER
+════════════════════════════════════════════════ */
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstall=e;
+  document.getElementById('install-banner').classList.add('show');
+});
+document.getElementById('install-btn').addEventListener('click',async()=>{
+  if(!deferredInstall)return;
+  deferredInstall.prompt();
+  const{outcome}=await deferredInstall.userChoice;
+  if(outcome==='accepted') document.getElementById('install-banner').classList.remove('show');
+  deferredInstall=null;
+});
+document.getElementById('install-dismiss').addEventListener('click',()=>{
+  document.getElementById('install-banner').classList.remove('show');
+});
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-banner').classList.remove('show');
+  toast('App installed! 📲 You can now use it offline','success');
+});
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(r=>console.log('SW registered',r)).catch(e=>console.log('SW failed',e));
+  });
+}
+
+/* ════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════ */
+DB.init();
+const sessionId=DB.get('session');
+if(sessionId){
+  const users=DB.get('users')||[];
+  currentUser=users.find(u=>u.id===sessionId);
+}
+if(currentUser){ startApp(); }
+else{ renderAuth('login'); }
+
+// Handle back button
+window.addEventListener('popstate',()=>{
+  if(viewHistory.length>0) goBack();
+});
+</script>
+</body>
+</html>
